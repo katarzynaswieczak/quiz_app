@@ -29,7 +29,7 @@ class Quiz_AppState extends State<Quiz_App> {
       {
         'questionText': 'What\s your favourite color?',
         'answers': ['Black', 'Blue', 'Pink', 'Yellow'],
-      },
+      }, //map
       {
         'questionText': 'What\s your favourite animal?',
         'answers': ['Elephant', 'Cat', 'Rabbit', 'Dog'],
@@ -48,13 +48,16 @@ class Quiz_AppState extends State<Quiz_App> {
         body: Column(
           children: [
             Question(
-              questions[questionIndex]['questionText'],
+              questions[questionIndex]['questionText'] as String,
+              //on all the questions, I'm accessing the question with index(0,1,2..)
+              //and then for the chosen question map, I access the value with the key questionText
             ),
-            Answer(answerQuestion),
-            Answer(answerQuestion),
-            Answer(answerQuestion),
-            Answer(answerQuestion),
-          ],
+            ...(questions[questionIndex]['answers'] as List<String>)
+                .map((answer) {
+              return Answer(answerQuestion, answer);
+              //transform every answer into an answer widget ...
+            }).toList() //I make sure that this is a list and then I take these generated answer widgets ...
+          ], // and I add it to this list
         ),
       ),
     );
