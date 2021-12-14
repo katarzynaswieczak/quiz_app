@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import './question.dart';
-import './answer.dart';
+import 'package:quiz_app/quiz.dart';
+import 'package:quiz_app/result.dart';
 
 void main() => runApp(Quiz_App());
 
@@ -13,23 +12,40 @@ class Quiz_App extends StatefulWidget {
 }
 
 class Quiz_AppState extends State<Quiz_App> {
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'What\s your favourite color?',
-      'answers': ['Black', 'Blue', 'Pink', 'Yellow'],
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Blue', 'score': 6},
+        {'text': 'Pink', 'score': 4},
+        {'text': 'Yellow', 'score': 2},
+      ],
     }, //map
     {
       'questionText': 'What\s your favourite animal?',
-      'answers': ['Elephant', 'Cat', 'Rabbit', 'Dog'],
+      'answers': [
+        {'text': 'Elephant', 'score': 4},
+        {'text': 'Cat', 'score': 1},
+        {'text': 'Rabbit', 'score': 3},
+        {'text': 'Dog', 'score': 7},
+      ],
     },
     {
       'questionText': 'Who\s your favourite instructor?',
-      'answers': ['Alex', 'Max', 'Kate', 'Sam'],
+      'answers': [
+        {'text': 'Alex', 'score': 3},
+        {'text': 'Max', 'score': 2},
+        {'text': 'Kate', 'score': 9},
+        {'text': 'Sam', 'score': 1},
+      ],
     },
   ];
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
@@ -37,7 +53,7 @@ class Quiz_AppState extends State<Quiz_App> {
     print(_questionIndex);
 
     //I'm  checking if question index is smaller than question length
-    if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print('I have more questions!');
     } else {
       print('No more questions!');
@@ -51,22 +67,12 @@ class Quiz_AppState extends State<Quiz_App> {
         appBar: AppBar(
           title: Text('Quiz App'),
         ),
-        body: _questionIndex < questions.length
-            ? Column(
-                children: [
-                  Question(
-                    questions[_questionIndex]['questionText'] as String,
-                    //on all the questions, I'm accessing the question with index(0,1,2..)
-                    //and then for the chosen question map, I access the value with the key questionText
-                  ),
-                  ...(questions[_questionIndex]['answers'] as List<String>)
-                      .map((answer) {
-                    return Answer(_answerQuestion, answer);
-                    //transform every answer into an answer widget ...
-                  }).toList() //I make sure that this is a list and then I take these generated answer widgets ...
-                ], // and I add it to this list
-              )
-            : Center(child: Text('You did it!')),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions)
+            : Result(_totalScore),
       ),
     );
   }
